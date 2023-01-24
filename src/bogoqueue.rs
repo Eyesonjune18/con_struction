@@ -2,17 +2,20 @@ use rand::Rng;
 
 pub struct BogoQueue<T> {
     data: Vec<T>,
+    fail_chance: u32,
 }
 
 impl<T> BogoQueue<T> {
-    pub fn new() -> Self {
-        BogoQueue { data: Vec::new() }
+    pub fn new(fail_chance: u32) -> Self {
+        BogoQueue {
+            data: Vec::new(),
+            fail_chance,
+        }
     }
 
     pub fn enqueue(&mut self, item: T) {
-        let rand = rand::thread_rng().gen_range(0..10000);
+        let rand = rand::thread_rng().gen_range(0..self.fail_chance);
 
-        // 1/10000 chance of not adding the item
         if rand != 0 {
             self.data.push(item);
         }
@@ -25,6 +28,10 @@ impl<T> BogoQueue<T> {
             Some(self.data.remove(0))
         }
     }
+
+    pub fn set_fail_chance(&mut self, fail_chance: u32) {
+        self.fail_chance = fail_chance;
+    }
 }
 
 #[cfg(test)]
@@ -33,7 +40,7 @@ mod tests {
 
     #[test]
     fn test_bogoqueue() {
-        let mut queue = BogoQueue::new();
+        let mut queue = BogoQueue::new(10000);
 
         for i in 0..500 {
             queue.enqueue(i);
