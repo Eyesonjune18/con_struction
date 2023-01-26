@@ -34,6 +34,14 @@ impl<T> BogoQueue<T> {
     pub fn set_fail_chance(&mut self, fail_chance: u32) {
         self.fail_chance = fail_chance;
     }
+
+    pub fn len(&self) -> usize {
+        self.data.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.data.is_empty()
+    }
 }
 
 #[cfg(test)]
