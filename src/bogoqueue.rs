@@ -1,3 +1,5 @@
+// A Queue implementation that fails to enqueue items with a given probability
+
 use rand::Rng;
 
 pub struct BogoQueue<T> {
