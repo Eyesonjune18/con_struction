@@ -16,7 +16,7 @@ impl<K: Hash, V> HazMap<K, V> {
     }
 
     pub fn insert(&mut self, key: K, value: V) {
-        let key = get_first_u32(&key);
+        let key = hash(&key);
 
         for (k, v) in &mut self.data {
             if k == &key {
@@ -29,7 +29,7 @@ impl<K: Hash, V> HazMap<K, V> {
     }
 
     pub fn get(&self, key: &K) -> Option<&V> {
-        let key = get_first_u32(key);
+        let key = hash(key);
 
         for (k, v) in &self.data {
             if *k == key {
@@ -41,7 +41,7 @@ impl<K: Hash, V> HazMap<K, V> {
     }
 
     pub fn get_mut(&mut self, key: &K) -> Option<&mut V> {
-        let key = get_first_u32(key);
+        let key = hash(key);
 
         for (k, v) in &mut self.data {
             if *k == key {
@@ -53,7 +53,7 @@ impl<K: Hash, V> HazMap<K, V> {
     }
 
     pub fn remove(&mut self, key: &K) -> Option<V> {
-        let key = get_first_u32(key);
+        let key = hash(key);
 
         for i in 0..self.data.len() {
             if self.data[i].0 == key {
@@ -75,18 +75,11 @@ impl<K: Hash, V> HazMap<K, V> {
 
 // Get the first u32 of a hashable key
 // If it does not have 4 bytes of data, pad it with 0s
-fn get_first_u32<K: Hash>(key: &K) -> u32 {
+fn hash<K: Hash>(key: &K) -> u32 {
     let mut hasher = Masher::default();
     key.hash(&mut hasher);
-    let hash = hasher.finish();
 
-    let mut bytes = [0u8; 4];
-
-    for i in 0..4 {
-        bytes[i] = (hash >> (i * 8)) as u8;
-    }
-
-    u32::from_le_bytes(bytes)
+    hasher.finish() as u32
 }
 
 #[derive(Default)]
