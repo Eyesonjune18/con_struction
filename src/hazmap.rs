@@ -94,8 +94,6 @@ struct Masher(Vec<u8>);
 
 impl std::hash::Hasher for Masher {
     fn write(&mut self, v: &[u8]) {
-        if self.0.len() >= 4 { return; };
-
         self.0.extend(v);
     }
 
